@@ -1,51 +1,134 @@
 package com.restapitutorial.demoRestAPI;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterRepo {
 	
-	List<Character> characters;
+	
+	
+	Connection con = null;
 	
 	public CharacterRepo() {
-		characters = new ArrayList<Character>();
 		
-		Character ch1 = new Character();
-		ch1.setName("2B");
-		ch1.setId(1);
-		ch1.setType("Android");
-		ch1.setAbility("Warrior");
-		
-		
-		Character ch2 = new Character();
-		ch2.setName("9S");
-		ch2.setId(2);
-		ch2.setType("Android");
-		ch2.setAbility("Scanner");
-		
-		characters.add(ch1);
-		characters.add(ch2);
+		String url = "jdbc:mysql://localhost:3306/restdb";
+		String user = "root";
+		String pass = "Police10!jh";
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			con = DriverManager.getConnection(url, user, pass);
+			System.out.println("Driver Connected");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
 	}
 	
 	public List<Character> getCharacters(){
+		
+		System.out.println("Starting getCharacters..");
+		List<Character> characters = new ArrayList<Character>();
+		String sql = "select * from characters";
+		try {
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				System.out.println("Trying to add character");
+				
+				Character ch = new Character();
+				ch.setId(rs.getInt(1));
+				ch.setName(rs.getString(2));
+				ch.setType(rs.getString(3));
+				ch.setAbility(rs.getString(4));
+				
+				characters.add(ch);
+				
+				
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		
 		return characters;
 	}
 	
 	public Character getCharacter(int id) {
 		
-		
-		for(Character ch : characters) {
-			if(ch.getId()==id) {
-				return ch;
+		Character ch = new Character();
+		String sql = "select * from characters where id=" + id;
+		try {
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			
+			if(rs.next()) {
+				
+				ch.setId(rs.getInt(1));
+				ch.setName(rs.getString(2));
+				ch.setType(rs.getString(3));
+				ch.setAbility(rs.getString(4));
+				
 			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
 		}
 		
-		return new Character();
+		
+		return ch;
 		
 	}
 	
 	public void create(Character ch) {
-		characters.add(ch);
+		
+		String sql = "insert into characters values (?, ?, ?, ?)";
+		try {
+			
+			PreparedStatement st = con.prepareStatement(sql);
+			st.setInt(1,  ch.getId());
+			st.setString(2, ch.getName());
+			st.setString(3,  ch.getType());
+			st.setString(4,  ch.getAbility());
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 	}
+	
+	
+	public void update(Character ch) {
+		
+		String sql = "update characters set name=?, type=?, ability=? where id=?";
+		try {
+			
+			PreparedStatement st = con.prepareStatement(sql);
+			
+			st.setString(1, ch.getName());
+			st.setString(2,  ch.getType());
+			st.setString(3,  ch.getAbility());
+			st.setInt(4,  ch.getId());
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 
 }
