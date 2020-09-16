@@ -2,8 +2,6 @@ package com.restapitutorial.demoRestAPI;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-//import org.codehaus.jackson.map.annotate.JsonRootName;
-
 
 @XmlRootElement
 public class Character {

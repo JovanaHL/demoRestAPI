@@ -4,6 +4,7 @@ package com.restapitutorial.demoRestAPI;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -61,8 +62,15 @@ public class CharacterResource {
 		return ch;
 	}
 	
-	public Character delete(Character ch) {
+	@DELETE
+	@Path("character/{id}")
+	public Character delete(@PathParam("id") int id) {
 		
+		Character ch = repo.getCharacter(id);
+		
+		if(ch.getId()!=0) {
+			repo.delete(id);
+		}
 		
 		
 		return ch;
