@@ -19,7 +19,7 @@ public class CharacterRepo {
 		
 		String url = "jdbc:mysql://localhost:3306/restdb";
 		String user = "root";
-		String pass = "Police10!jh";
+		String pass = "0000";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection(url, user, pass);
@@ -120,6 +120,21 @@ public class CharacterRepo {
 			st.setString(2,  ch.getType());
 			st.setString(3,  ch.getAbility());
 			st.setInt(4,  ch.getId());
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+public void delete(int id) {
+		
+		String sql = "delete from characters where id=?";
+		try {
+			
+			PreparedStatement st = con.prepareStatement(sql);
+			st.setInt(1,  id);
 			st.executeUpdate();
 			
 		} catch (SQLException e) {
